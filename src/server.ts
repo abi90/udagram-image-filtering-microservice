@@ -1,6 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import { verifyImageURL } from 'verify-image-url';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+
+const UNPROCESSABLE_ENTITY = 422;
+const BAD_REQUEST = 400;
 
 (async () => {
 
@@ -30,6 +34,31 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
+  app.get( "/filteredimage", async ( req, res ) => {
+    const { image_url } = req.query
+    
+    if (!image_url) {
+      res.status(BAD_REQUEST).json({
+        message: "image_url is required"
+      })
+    }
+
+    const { isImage } = await verifyImageURL(image_url)
+    if (!isImage) {
+      res.status(UNPROCESSABLE_ENTITY).json({
+        message: "image_url must be a valid image URL"
+      })
+    }
+
+    const imagePath = await filterImageFromURL(image_url)
+
+    res.sendFile(imagePath, {}, (err) => {
+      if (!err) {
+        deleteLocalFiles([imagePath])
+      }
+    })
+
+  } );
   
   // Root Endpoint
   // Displays a simple message to the user
