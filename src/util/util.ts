@@ -10,14 +10,6 @@ import axios from 'axios'
 // RETURNS
 //    an absolute path to a filtered image locally saved file
 
-// axios({
-//   method: 'get',
-//   url: failingImageUrl,
-//   responseType: 'arraybuffer'
-//   })
-//   .then(function ({data: imageBuffer}) {
-//    return jimp.read(imageBuffer)
-//   })
 export async function filterImageFromURL(inputURL: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {
