@@ -6,6 +6,10 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 const UNPROCESSABLE_ENTITY = 422;
 const BAD_REQUEST = 400;
 
+type ErrorMessage = {
+  message: string
+}
+
 (async () => {
 
   // Init the Express application
@@ -35,22 +39,23 @@ const BAD_REQUEST = 400;
 
   //! END @TODO1
   app.get( "/filteredimage", async ( req, res ) => {
-    const { image_url } = req.query
-    
+    const image_url: string = req.query.image_url
+
     if (!image_url) {
       res.status(BAD_REQUEST).json({
         message: "image_url is required"
-      })
+      } as ErrorMessage)
     }
 
     const { isImage } = await verifyImageURL(image_url)
+
     if (!isImage) {
       res.status(UNPROCESSABLE_ENTITY).json({
         message: "image_url must be a valid image URL"
-      })
+      } as ErrorMessage)
     }
 
-    const imagePath = await filterImageFromURL(image_url)
+    const imagePath: string = await filterImageFromURL(image_url)
 
     res.sendFile(imagePath, {}, (err) => {
       if (!err) {
@@ -58,7 +63,7 @@ const BAD_REQUEST = 400;
       }
     })
 
-  } );
+  });
   
   // Root Endpoint
   // Displays a simple message to the user
