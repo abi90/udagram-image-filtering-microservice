@@ -58,7 +58,7 @@ type ErrorMessage = {
       const imagePath: string = await filterImageFromURL(image_url);
 
       const OK: number = 200;
-      return res.status(OK).sendFile(imagePath, {}, (err) => {
+      return res.status(OK).sendFile(imagePath, {}, (err: Error) => {
         if (!err) {
           deleteLocalFiles([imagePath])
         }
